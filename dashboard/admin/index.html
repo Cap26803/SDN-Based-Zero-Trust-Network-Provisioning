@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - SDN ZTN</title>
+    <link rel="stylesheet" href="/common/style.css">
+    <script src="/libs/jquery.min.js"></script>
+    <script src="/libs/chart.min.js"></script>
+</head>
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<h2>Live Network Topology</h2>
+<div id="network" style="height: 500px; border: 1px solid black;"></div>
+
+<script src="/libs/vis-network.min.js"></script>
+<script src="/admin/topology.js"></script>
+
+<h2>Live Attack Logs</h2>
+<table border="1" id="attackLogs">
+<thead>
+<tr><th>ID</th><th>Unknown IP</th><th>Timestamp</th><th>Action</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<h2>Login Logs (Raw View)</h2>
+<table border="1" id="loginTable">
+<thead>
+<tr><th>Username</th><th>Role</th><th>Time</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<h2>Password Reset Alerts</h2>
+<table border="1" id="resetAlerts">
+<thead>
+<tr><th>Username</th><th>Alert</th><th>Time</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+
+
+<!-- ✅ New Chart Section -->
+<h2>📈 System Activity Chart</h2>
+<canvas id="adminChart" height="100"></canvas>
+
+<script src="/admin/script.js"></script>
+
+<script>
+$(document).ready(function(){
+    // Dummy data: replace with dynamic values later if needed
+    const labels = ['Students', 'Faculty', 'IT Staff', 'Blocked Attacks'];
+    const values = [32, 12, 6, 8]; // These can be fetched from an API
+
+    drawAdminChart(labels, values);
+
+    function drawAdminChart(labels, dataValues){
+        const ctx = document.getElementById('adminChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Activity Overview',
+                    data: dataValues,
+                    backgroundColor: generateColors(labels.length)
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 50 // consistent across dashboards
+                    }
+                }
+            }
+        });
+    }
+
+    function generateColors(count) {
+        const baseColors = [
+            '#58a6ff', '#E67E22', '#82E0AA', '#E57373',
+            '#AF7AC5', '#F7DC6F', '#76D7C4', '#7FB3D5', '#D98880'
+        ];
+        const colors = [];
+        for (let i = 0; i < count; i++) {
+            colors.push(baseColors[i % baseColors.length]);
+        }
+        return colors;
+    }
+});
+</script>
+
+</body>
+</html>
+

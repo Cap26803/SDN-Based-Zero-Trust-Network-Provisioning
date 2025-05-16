@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | SDN-ZTN Network Portal</title>
+    <link rel="stylesheet" href="/common/style.css">
+    <script src="/libs/jquery.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #0d1117;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #c9d1d9;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .fade-in {
+            animation: fadeIn 1.2s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            display: flex;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            width: 850px;
+            max-width: 96%;
+        }
+
+        .info-panel {
+            background-color: #0d1117;
+            padding: 40px 30px;
+            width: 50%;
+            border-right: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .info-panel svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            stroke: #58a6ff;
+        }
+
+        .info-panel h2 {
+            color: #58a6ff;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .info-panel p {
+            font-size: 15px;
+            color: #8b949e;
+            line-height: 1.6;
+        }
+
+        .login-box {
+            padding: 40px 30px;
+            width: 50%;
+        }
+
+        .login-box h1 {
+            font-size: 26px;
+            color: #58a6ff;
+            margin-bottom: 10px;
+        }
+
+        .login-box p {
+            color: #8b949e;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            font-size: 15px;
+        }
+
+        button {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2ea043;
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #6e7681;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .info-panel,
+            .login-box {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #30363d;
+            }
+
+            .info-panel svg {
+                display: none;
+            }
+        }
+        /* Add text animation styles */
+    .animated-text {
+        position: relative;
+        display: inline-block;
+        height: 1.2em; /* Fixed height to prevent layout shift */
+        overflow: hidden;
+    }
+
+    .animated-text span {
+        position: absolute;
+        left: 0;
+        right: 0;
+        opacity: 0;
+        animation: textSwap 4s infinite;
+    }
+
+    @keyframes textSwap {
+        0%, 50% {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        25%, 75% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+    }
+
+    .animated-text span:nth-child(1) {
+        animation-delay: 0s;
+    }
+
+    .animated-text span:nth-child(2) {
+        animation-delay: 2s;
+    }
+    </style>
+</head>
+<body>
+
+<div class="container fade-in">
+
+    <!-- Info Panel with Modern SVG -->
+    <div class="info-panel">
+    <svg fill="#34a4ea" height="200px" width="200px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 214.27 214.27" xml:space="preserve" stroke="#34a4ea"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M196.926,55.171c-0.11-5.785-0.215-11.25-0.215-16.537c0-4.142-3.357-7.5-7.5-7.5c-32.075,0-56.496-9.218-76.852-29.01 c-2.912-2.832-7.546-2.831-10.457,0c-20.354,19.792-44.771,29.01-76.844,29.01c-4.142,0-7.5,3.358-7.5,7.5 c0,5.288-0.104,10.755-0.215,16.541c-1.028,53.836-2.436,127.567,87.331,158.682c0.796,0.276,1.626,0.414,2.456,0.414 c0.83,0,1.661-0.138,2.456-0.414C199.36,182.741,197.954,109.008,196.926,55.171z M107.131,198.812 c-76.987-27.967-75.823-89.232-74.79-143.351c0.062-3.248,0.122-6.396,0.164-9.482c30.04-1.268,54.062-10.371,74.626-28.285 c20.566,17.914,44.592,27.018,74.634,28.285c0.042,3.085,0.102,6.231,0.164,9.477C182.961,109.577,184.124,170.844,107.131,198.812 z"></path> <path d="M132.958,81.082l-36.199,36.197l-15.447-15.447c-2.929-2.928-7.678-2.928-10.606,0c-2.929,2.93-2.929,7.678,0,10.607 l20.75,20.75c1.464,1.464,3.384,2.196,5.303,2.196c1.919,0,3.839-0.732,5.303-2.196l41.501-41.5 c2.93-2.929,2.93-7.678,0.001-10.606C140.636,78.154,135.887,78.153,132.958,81.082z"></path> </g> </g></svg>
+        <h2>Welcome to Zero-Trust Network</h2>
+        <p>
+            Experience Secure Role-based Access<br>
+            Real-time Monitoring, Attack Detection,<br>
+            and Live Network Visualization.
+        </p>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-box fade-in">
+        <h1>🔐 Login</h1>
+        <p>Access your dashboard securely</p>
+
+        <form onsubmit="return loginUser()">
+            <input type="text" id="username" placeholder="Enter Username" required>
+            <input type="password" id="password" placeholder="Enter Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="footer-text">
+            Powered by Software-Defined Networking & Zero Trust Architecture
+        </div>
+    </div>
+
+</div>
+
+<script>
+function loginUser(){
+    const u = $('#username').val();
+    const p = $('#password').val();
+
+    $.post('/api/login', {username: u, password: p}, function(res){
+        if(res.status === 'success'){
+            localStorage.setItem('username', u);
+
+            if(res.role === 'admin'){
+                window.location.href = '/admin/index.html';
+            } else if(res.role === 'faculty'){
+                window.location.href = '/faculty/index.html';
+            } else if(res.role === 'student'){
+                window.location.href = '/student/index.html';
+            } else {
+                alert('⚠️ Unauthorized role');
+            }
+        } else {
+            alert('❌ Login Failed. Please check credentials.');
+        }
+    });
+
+    return false;
+}
+</script>
+
+</body>
+</html>
+

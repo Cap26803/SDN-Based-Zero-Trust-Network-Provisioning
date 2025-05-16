@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" href="../common/style.css">
+  <script src="../libs/jquery.min.js"></script>
+  <script src="../libs/chart.min.js"></script>
+  <style>
+    .container { max-width: 1200px; margin: auto; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px; margin-top: 30px;
+    }
+    .card {
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px #00000055;
+      text-align: left;
+    }
+    .card h3 { color: #58a6ff; margin-top: 0; }
+    .header, .welcome { text-align: left; }
+    #marksTable { width: 100%; }
+    .announcements li { margin-bottom: 10px; }
+    .logout {
+      float: right;
+      background: #da3633;
+      font-size: 14px;
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .welcome {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #8b949e;
+    }
+    .alert-box {
+      background: #fcd34d;
+      color: #111827;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .reset-form {
+      margin-top: 20px;
+    }
+    .reset-form input {
+      padding: 8px;
+      width: 250px;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="nav">
+    <h1 class="header">🎓 Student Dashboard</h1>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+
+  <p class="welcome" id="welcomeText">Welcome back!</p>
+
+  <!-- 🔐 Alert Box -->
+  <div id="resetAlert" class="alert-box" style="display:none;">
+    ⚠️ Multiple failed login attempts detected. For your security, please reset your password.
+    <div class="reset-form">
+      <input type="password" id="newPass" placeholder="Enter new password"><br>
+      <button onclick="submitNewPassword()">🔄 Reset Password</button>
+    </div>
+  </div>
+
+  <!-- Profile & Marks -->
+  <div class="grid">
+    <div class="card">
+      <h3>👤 Profile</h3>
+      <p><strong>Username:</strong> <span id="studentName">Loading...</span></p>
+      <p><strong>Status:</strong> Verified Student</p>
+      <p><strong>IP:</strong> Auto-assigned</p>
+    </div>
+    <div class="card">
+      <h3>📊 Your Marks</h3>
+      <table id="marksTable">
+        <thead><tr><th>Subject</th><th>Marks</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>📢 Announcements</h3>
+      <ul class="announcements">
+        <li>🔹 New Assignment in Computer Networks due next week.</li>
+        <li>🔹 Faculty feedback forms open till Friday.</li>
+        <li>🔹 Mid-semester exams from 15th May. Prepare well!</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📁 Courses (Coming Soon)</h3>
+      <p>This section will show enrolled subjects, progress, and schedules.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 30px;">
+    <h3>📈 Stats & Progress Overview</h3>
+    <canvas id="progressChart" height="100"></canvas>
+  </div>
+
+</div>
+
+<script>
+  $(document).ready(function(){
+    const username = localStorage.getItem('username');
+    if(!username){
+      alert("Session expired. Please login again.");
+      window.location.href = '/login.html';
+      return;
+    }
+
+    $('#studentName').text(username);
+    $('#welcomeText').text("Welcome back, " + username + "! 🎉");
+
+    fetchMarks(username);
+    checkForResetAlert(username);
+
+    function fetchMarks(username){
+      $.get('/api/my_marks?username=' + username, function(data){
+        var rows = '', subjects = [], scores = [];
+
+        if(data.length === 0){
+          rows += `<tr><td colspan="2">No Marks Found</td></tr>`;
+        } else {
+          data.forEach(row => {
+            rows += `<tr><td>${row.subject}</td><td>${row.marks}</td></tr>`;
+            subjects.push(row.subject);
+            scores.push(row.marks);
+          });
+        }
+
+        $("#marksTable tbody").html(rows);
+        drawChart(subjects, scores);
+      });
+    }
+
+    function drawChart(subjects, scores){
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: subjects,
+          datasets: [{
+            label: 'Marks',
+            data: scores,
+            backgroundColor: generateColors(subjects.length)
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true, max: 50 } }
+        }
+      });
+    }
+
+    function generateColors(count){
+      const palette = ['#238636','#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2','#7f7f7f','#bcbd22','#17becf','#ff69b4'];
+      return Array.from({length: count}, (_, i) => palette[i % palette.length]);
+    }
+
+    function checkForResetAlert(username){
+      $.get('/admin/password_reset.json', function(list){
+        const shouldReset = list.some(entry => entry.username === username);
+        if(shouldReset){
+          $('#resetAlert').show();
+        }
+      });
+    }
+  });
+
+  function logout(){
+    localStorage.removeItem('username');
+    window.location.href = '/login.html';
+  }
+
+  function submitNewPassword(){
+    const username = localStorage.getItem('username');
+    const newPassword = $("#newPass").val().trim();
+
+    if(!newPassword){
+      alert("Please enter a new password.");
+      return;
+    }
+
+    $.post('/api/reset_password', { username, new_password: newPassword }, function(response){
+      alert(response.message || "Password updated.");
+      if(response.success){
+        $("#resetAlert").hide();
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
+

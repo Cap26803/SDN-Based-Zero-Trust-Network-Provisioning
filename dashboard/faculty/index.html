@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Faculty Dashboard</title>
+    <link rel="stylesheet" href="../common/style.css">
+    <script src="../libs/jquery.min.js"></script>
+    <script src="../libs/chart.min.js"></script>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px #00000055;
+            text-align: left;
+        }
+
+        .card h3 {
+            color: #58a6ff;
+            margin-top: 0;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header, .welcome {
+            text-align: left;
+        }
+
+        .logout {
+            float: right;
+            background: #da3633;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        #marksTable tbody {
+            max-height: 200px;
+            overflow-y: auto;
+            display: block;
+        }
+
+        #marksTable thead,
+        #marksTable tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="nav">
+            <h1 class="header">👨‍🏫 Faculty Dashboard</h1>
+            <button class="logout" onclick="logout()">Logout</button>
+        </div>
+
+        <p class="welcome" id="welcomeText">Welcome back, Faculty!</p>
+
+        <div class="grid">
+            <!-- Profile Card -->
+            <div class="card">
+                <h3>👤 Profile</h3>
+                <p><strong>Username:</strong> <span id="facultyName">Loading...</span></p>
+                <p><strong>Department:</strong> Computer Science</p>
+                <p><strong>Status:</strong> Active Faculty</p>
+            </div>
+
+            <!-- Add Marks Form -->
+            <div class="card">
+                <h3>📝 Add Marks</h3>
+                <form id="addMarksForm">
+                    <div class="form-group">
+                        <label>Student Username:</label>
+                        <input type="text" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject:</label>
+                        <input type="text" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Marks:</label>
+                        <input type="number" name="marks" required>
+                    </div>
+                    <button type="submit">Add Marks</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 30px;">
+            <h3>📋 All Submitted Marks</h3>
+            <table id="marksTable">
+                <thead>
+                    <tr><th>Student</th><th>Subject</th><th>Marks</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="card" style="margin-top: 30px;">
+            <h3>📈 Subject-wise Averages</h3>
+            <canvas id="facultyChart" height="100"></canvas>
+        </div>
+
+    </div>
+
+<!-- Only this <script> part is updated -->
+<script>
+$(document).ready(function(){
+    const username = localStorage.getItem('username');
+    if(!username){
+        alert("Session expired. Please login again.");
+        window.location.href = '/login.html';
+        return;
+    }
+
+    $('#facultyName').text(username);
+    $('#welcomeText').text("Welcome back, " + username + "! 👋");
+
+    fetchMarks();
+
+    $("#addMarksForm").submit(function(e){
+        e.preventDefault();
+        $.post('/api/add_marks', $(this).serialize(), function(response){
+            alert(response.message);
+            fetchMarks();
+        });
+    });
+
+    function fetchMarks(){
+        $.get('/api/view_marks', function(data){
+            let rows = '';
+            const subjectMap = {};
+
+            data.forEach(row => {
+                rows += `<tr><td>${row.username}</td><td>${row.subject}</td><td>${row.marks}</td></tr>`;
+
+                if (!subjectMap[row.subject]) {
+                    subjectMap[row.subject] = { total: 0, count: 0 };
+                }
+                subjectMap[row.subject].total += row.marks;
+                subjectMap[row.subject].count += 1;
+            });
+
+            $("#marksTable tbody").html(rows);
+
+            const subjects = Object.keys(subjectMap);
+            const averages = subjects.map(sub => Math.round(subjectMap[sub].total / subjectMap[sub].count));
+
+            drawChart(subjects, averages);
+        });
+    }
+
+    function drawChart(subjects, averages){
+        const ctx = document.getElementById('facultyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: subjects,
+                datasets: [{
+                    label: 'Average Marks',
+                    data: averages,
+                    backgroundColor: generateColors(subjects.length)
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 50 // Updated max value here
+                    }
+                }
+            }
+        });
+    }
+
+    // Color generator for chart bars
+    function generateColors(count) {
+        const baseColors = [
+            '#58a6ff', '#82E0AA', '#E59866', '#AF7AC5', '#F1948A',
+            '#F7DC6F', '#76D7C4', '#E67E22', '#7FB3D5', '#D98880'
+        ];
+        const colors = [];
+        for (let i = 0; i < count; i++) {
+            colors.push(baseColors[i % baseColors.length]);
+        }
+        return colors;
+    }
+});
+
+function logout(){
+    localStorage.removeItem('username');
+    window.location.href = '/login.html';
+}
+</script>
+
+</body>
+</html>
+
