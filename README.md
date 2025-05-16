@@ -78,21 +78,17 @@ Using **Mininet** for network simulation and **Open vSwitch (OVS)** for traffic 
     - Create a new database for the project.
     - Import the provided SQL schema file.
 
-3. **Launch Network Simulation**:
+### Implementation Steps
+
+1. **Launch Network Simulation** (/mininet_topology):
     ```bash
-    sudo mn --topo single,3 --mac --switch ovsk --controller remote
+    python3 topology.py
     ```
 
-4. **Run the Controller**:
+2. **Run the Web Application**:
     ```bash
-    python3 controller.py
+    python3 run_server.py
     ```
-
-5. **Run the Web Application**:
-    ```bash
-    python3 app.py
-    ```
-
 ---
 
 ## Usage
@@ -102,16 +98,15 @@ Using **Mininet** for network simulation and **Open vSwitch (OVS)** for traffic 
 - Open a browser and navigate to: `http://localhost:5000`  
 - Log in using the appropriate credentials:
 
-  - **Admin**: `admin@example.com / admin123`  
-  - **Faculty**: `faculty@example.com / faculty123`  
-  - **Student**: `student@example.com / student123`
+  - **Admin**: `admin / admin123`  
+  - **Faculty**: `f1 / faculty1`  
+  - **Student**: `h1 / student1`
 
 ### Dashboard Functionalities
 
 #### Admin Dashboard
 - View real-time network topology  
 - Monitor attack logs and blocked IPs  
-- Manage user roles and permissions
 
 #### Faculty Dashboard
 - Add and manage student marks  
