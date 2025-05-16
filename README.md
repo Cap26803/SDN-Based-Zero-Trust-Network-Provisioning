@@ -132,6 +132,7 @@ Using **Mininet** for network simulation and **Open vSwitch (OVS)** for traffic 
 | TC5          | Faculty Dashboard      | Marks are stored and visible to students      | Pass                               | Pass          |
 | TC6          | Student Dashboard      | Personalized data is displayed correctly      | Pass                               | Pass          |
 
+---
 ## License
 
 This project is licensed under the **MIT License**. See the `LICENSE` file for details.
