@@ -77,8 +77,9 @@ Using **Mininet** for network simulation and **Open vSwitch (OVS)** for traffic 
 2. **Configure MySQL Database**:
     - Create a new database for the project.
     - Import the provided SQL schema file.
+---
 
-### Implementation Steps
+## Implementation
 
 1. **Launch Network Simulation** (/mininet_topology):
     ```bash
