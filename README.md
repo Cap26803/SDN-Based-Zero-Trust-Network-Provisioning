@@ -4,11 +4,11 @@ A Capstone Project implementing a Zero Trust Network (ZTN) security model using 
 
 ---
 
-## 🔐 What is Zero Trust Network (ZTN)?
+##  What is Zero Trust Network (ZTN)?
 
 **Zero Trust Network (ZTN)** is a security architecture that follows the principle of “never trust, always verify.” It eliminates implicit trust by continuously validating users, devices, and services before granting access to network resources—regardless of whether the connection originates internally or externally.
 
-### 🏫 ZTN in a University Scenario
+### ZTN in a University Scenario
 
 In this project, ZTN is implemented in an academic setting as follows:
 
@@ -19,7 +19,7 @@ In this project, ZTN is implemented in an academic setting as follows:
 
 This aligns with real-world university networks where internal and external threats must be contained, and access should be minimal and role-specific.
 
-### 🌐 Applicability to Other Scenarios
+### Applicability to Other Scenarios
 
 The ZTN model used here is modular and adaptable. It can be extended to:
 
